@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>Englisch lernen</title>
+
+  <style>
+    body {
+      font-family: Verdana, sans-serif;
+      background: linear-gradient(to bottom right, #f9f9f9, #d8f3ff);
+      text-align: center;
+      padding: 2em;
+      color: #333;
+    }
+
+    h1 {
+      font-size: 2em;
+      color: #2a7de1;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 2em;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    .song-text {
+      font-size: 1.4em;
+      margin: 1em 0 0.5em;
+      background: #e0f7fa;
+      padding: 1em;
+      border-radius: 10px;
+    }
+
+    .feedback {
+      font-size: 1.2em;
+      margin-top: 1em;
+      background: #e0f7fa;
+      padding: 1em;
+      border-radius: 10px;
+      height: 27px;
+      overflow: hidden;
+    }
+
+    button {
+      padding: 0.7em 1.2em;
+      font-size: 1em;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin: 0.5em;
+    }
+
+    .check-btn {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    .next-btn {
+      background-color: #2196f3;
+      color: white;
+    }
+
+    .back-btn {
+      background-color: #ff9800;
+      color: white;
+    }
+
+    .radio-group {
+      margin-bottom: 1em;
+      font-size: 1.1em;
+    }
+
+    select {
+      font-size: 1em;
+      padding: 0.4em;
+      border-radius: 6px;
+      margin-top: 1em;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>Englisch lernen</h1>
+
+    <div class="radio-group">
+      <label>
+        <input type="radio" name="direction" value="en-de" checked
+               onchange="resetUI()">
+        🇬🇧 Englisch → Deutsch
+      </label>
+
+      <label>
+        <input type="radio" name="direction" value="de-en"
+               onchange="resetUI()">
+        🇩🇪 Deutsch → Englisch
+      </label>
+    </div>
+
+    <div class="radio-group">
+      <label for="modeSelect">Modus wählen:</label>
+
+      <select id="modeSelect" onchange="changeMode()">
+        <option value="word">Einzelne Wörter</option>
+        <option value="line">Einfache Sätze</option>
+      </select>
+    </div>
+
+    <div class="song-text" id="songText">
+      Lade Inhalt...
+    </div>
+
+    <div class="feedback" id="feedbackArea"></div>
+
+    <div>
+      <button class="back-btn" onclick="prevWord()">
+        ⬅️ Zurück
+      </button>
+
+      <button class="check-btn" onclick="checkTranslation()">
+        Übersetzung anzeigen
+      </button>
+
+      <button class="next-btn" onclick="nextWord()">
+        Nächster ➡️
+      </button>
+    </div>
+
+  </div>
+
+
+<script>
+
+const array1 = [
+  { "en": "match",     "de": "zuordnen" },
+  { "en": "circle",    "de": "einkreisen" },
+  { "en": "tick",      "de": "abhaken" },
+  { "en": "underline", "de": "unterstreichen" },
+  { "en": "write",     "de": "schreiben" },
+  { "en": "draw",      "de": "zeichnen" },
+  { "en": "colour",    "de": "ausmalen" },
+  { "en": "mark",      "de": "markieren" },
+  { "en": "number",    "de": "nummerieren" },
+  { "en": "cut out",   "de": "ausschneiden" },
+  { "en": "stick",     "de": "kleben" },
+  { "en": "copy",      "de": "abschreiben" },
+  { "en": "read",      "de": "lesen" },
+  { "en": "listen",    "de": "zuhören" },
+  { "en": "check",     "de": "überprüfen" },
+  { "en": "cross out", "de": "durchstreichen" }
+];
+
+
+const array2 = [
+  { "en": "Match the words.",       "de": "Ordne die Wörter zu." },
+  { "en": "Circle the word.",       "de": "Kreise das Wort ein." },
+  { "en": "Tick the box.",          "de": "Hake das Kästchen ab." },
+  { "en": "Underline the word.",    "de": "Unterstreiche das Wort." },
+  { "en": "Write your name.",       "de": "Schreibe deinen Namen." },
+  { "en": "Draw a house.",          "de": "Zeichne ein Haus." },
+  { "en": "Colour the ball.",       "de": "Male den Ball aus." },
+  { "en": "Mark the word.",         "de": "Markiere das Wort." },
+  { "en": "Number the pictures.",   "de": "Nummeriere die Bilder." },
+  { "en": "Cut out the picture.",   "de": "Schneide das Bild aus." },
+  { "en": "Stick the picture.",     "de": "Klebe das Bild auf." },
+  { "en": "Copy the word.",         "de": "Schreibe das Wort ab." },
+  { "en": "Read the text.",         "de": "Lies den Text." },
+  { "en": "Listen to me.",          "de": "Hör mir zu." },
+  { "en": "Check your answer.",     "de": "Überprüfe deine Antwort." },
+  { "en": "Cross out the word.",    "de": "Streiche das Wort durch." }
+];
+
+
+let currentMode = "word";
+let currentWordIndex = 0;
+let currentLineIndex = 0;
+
+
+function getDirection() {
+  return document.querySelector(
+    'input[name="direction"]:checked'
+  ).value;
+}
+
+
+function changeMode() {
+  currentMode = document.getElementById("modeSelect").value;
+  resetUI();
+}
+
+
+function resetUI() {
+
+  document.getElementById("feedbackArea").innerText = "";
+
+  if (currentMode === "word") {
+
+    currentWordIndex = 0;
+
+    const word = array1[currentWordIndex];
+
+    document.getElementById("songText").innerText =
+      getDirection() === "en-de"
+        ? word.en
+        : word.de;
+
+  } else {
+
+    currentLineIndex = 0;
+
+    const line = array2[currentLineIndex];
+
+    document.getElementById("songText").innerText =
+      getDirection() === "en-de"
+        ? line.en
+        : line.de;
+  }
+}
+
+
+function nextWord() {
+
+  if (currentMode === "word") {
+
+    currentWordIndex =
+      (currentWordIndex + 1) % array1.length;
+
+    const word = array1[currentWordIndex];
+
+    document.getElementById("songText").innerText =
+      getDirection() === "en-de"
+        ? word.en
+        : word.de;
+
+  } else {
+
+    currentLineIndex =
+      (currentLineIndex + 1) % array2.length;
+
+    const line = array2[currentLineIndex];
+
+    document.getElementById("songText").innerText =
+      getDirection() === "en-de"
+        ? line.en
+        : line.de;
+  }
+
+  document.getElementById("feedbackArea").innerText = "";
+}
+
+
+function prevWord() {
+
+  if (currentMode === "word") {
+
+    currentWordIndex =
+      (currentWordIndex - 1 + array1.length)
+      % array1.length;
+
+    const word = array1[currentWordIndex];
+
+    document.getElementById("songText").innerText =
+      getDirection() === "en-de"
+        ? word.en
+        : word.de;
+
+  } else {
+
+    currentLineIndex =
+      (currentLineIndex - 1 + array2.length)
+      % array2.length;
+
+    const line = array2[currentLineIndex];
+
+    document.getElementById("songText").innerText =
+      getDirection() === "en-de"
+        ? line.en
+        : line.de;
+  }
+
+  document.getElementById("feedbackArea").innerText = "";
+}
+
+
+function checkTranslation() {
+
+  const direction = getDirection();
+
+  if (currentMode === "word") {
+
+    const word = array1[currentWordIndex];
+
+    document.getElementById("feedbackArea").innerText =
+      direction === "en-de"
+        ? word.de
+        : word.en;
+
+  } else {
+
+    const line = array2[currentLineIndex];
+
+    document.getElementById("feedbackArea").innerText =
+      direction === "en-de"
+        ? line.de
+        : line.en;
+  }
+}
+
+
+// Initialisieren
+resetUI();
+
+</script>
+
+</body>
+</html>
