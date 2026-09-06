@@ -76,11 +76,28 @@
       font-size: 1.1em;
     }
 
-    select {
+    /* Toggle-Button für Wörter / Sätze */
+
+    .mode-toggle {
+      min-width: 190px;
+      padding: 0.7em 1.2em;
       font-size: 1em;
-      padding: 0.4em;
-      border-radius: 6px;
-      margin-top: 1em;
+      color: #222;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    /* Wörter = Gelb */
+
+    .mode-toggle.word-mode {
+      background-color: #ffd54f;
+    }
+
+    /* Sätze = Orange */
+
+    .mode-toggle.line-mode {
+      background-color: #ff9800;
     }
   </style>
 </head>
@@ -92,46 +109,81 @@
     <h1>Englisch lernen</h1>
 
     <div class="radio-group">
+
       <label>
-        <input type="radio" name="direction" value="en-de" checked
-               onchange="resetUI()">
+        <input
+          type="radio"
+          name="direction"
+          value="en-de"
+          checked
+          onchange="resetUI()"
+        >
         🇬🇧 Englisch → Deutsch
       </label>
 
       <label>
-        <input type="radio" name="direction" value="de-en"
-               onchange="resetUI()">
+        <input
+          type="radio"
+          name="direction"
+          value="de-en"
+          onchange="resetUI()"
+        >
         🇩🇪 Deutsch → Englisch
       </label>
+
     </div>
+
 
     <div class="radio-group">
-      <label for="modeSelect">Modus wählen:</label>
 
-      <select id="modeSelect" onchange="changeMode()">
-        <option value="word">Einzelne Wörter</option>
-        <option value="line">Einfache Sätze</option>
-      </select>
+      <button
+        id="modeToggle"
+        class="mode-toggle word-mode"
+        onclick="changeMode()"
+      >
+        Einzelne Wörter
+      </button>
+
     </div>
 
-    <div class="song-text" id="songText">
+
+    <div
+      class="song-text"
+      id="songText"
+    >
       Lade Inhalt...
     </div>
 
-    <div class="feedback" id="feedbackArea"></div>
+
+    <div
+      class="feedback"
+      id="feedbackArea"
+    ></div>
+
 
     <div>
-      <button class="back-btn" onclick="prevWord()">
+
+      <button
+        class="back-btn"
+        onclick="prevWord()"
+      >
         ⬅️ Zurück
       </button>
 
-      <button class="check-btn" onclick="checkTranslation()">
+      <button
+        class="check-btn"
+        onclick="checkTranslation()"
+      >
         Übersetzung anzeigen
       </button>
 
-      <button class="next-btn" onclick="nextWord()">
+      <button
+        class="next-btn"
+        onclick="nextWord()"
+      >
         Nächster ➡️
       </button>
+
     </div>
 
   </div>
@@ -140,74 +192,205 @@
 <script>
 
 const array1 = [
+
   { "en": "match",     "de": "zuordnen" },
   { "en": "circle",    "de": "einkreisen" },
   { "en": "tick",      "de": "abhaken" },
   { "en": "underline", "de": "unterstreichen" },
+
   { "en": "write",     "de": "schreiben" },
   { "en": "draw",      "de": "zeichnen" },
   { "en": "colour",    "de": "ausmalen" },
   { "en": "mark",      "de": "markieren" },
+
   { "en": "number",    "de": "nummerieren" },
   { "en": "cut out",   "de": "ausschneiden" },
   { "en": "stick",     "de": "kleben" },
   { "en": "copy",      "de": "abschreiben" },
+
   { "en": "read",      "de": "lesen" },
   { "en": "listen",    "de": "zuhören" },
   { "en": "check",     "de": "überprüfen" },
   { "en": "cross out", "de": "durchstreichen" }
+
 ];
 
 
 const array2 = [
-  { "en": "Match the words.",       "de": "Ordne die Wörter zu." },
-  { "en": "Circle the word.",       "de": "Kreise das Wort ein." },
-  { "en": "Tick the box.",          "de": "Hake das Kästchen ab." },
-  { "en": "Underline the word.",    "de": "Unterstreiche das Wort." },
-  { "en": "Write your name.",       "de": "Schreibe deinen Namen." },
-  { "en": "Draw a house.",          "de": "Zeichne ein Haus." },
-  { "en": "Colour the ball.",       "de": "Male den Ball aus." },
-  { "en": "Mark the word.",         "de": "Markiere das Wort." },
-  { "en": "Number the pictures.",   "de": "Nummeriere die Bilder." },
-  { "en": "Cut out the picture.",   "de": "Schneide das Bild aus." },
-  { "en": "Stick the picture.",     "de": "Klebe das Bild auf." },
-  { "en": "Copy the word.",         "de": "Schreibe das Wort ab." },
-  { "en": "Read the text.",         "de": "Lies den Text." },
-  { "en": "Listen to me.",          "de": "Hör mir zu." },
-  { "en": "Check your answer.",     "de": "Überprüfe deine Antwort." },
-  { "en": "Cross out the word.",    "de": "Streiche das Wort durch." }
+
+  {
+    "en": "Match the words.",
+    "de": "Ordne die Wörter zu."
+  },
+
+  {
+    "en": "Circle the word.",
+    "de": "Kreise das Wort ein."
+  },
+
+  {
+    "en": "Tick the box.",
+    "de": "Hake das Kästchen ab."
+  },
+
+  {
+    "en": "Underline the word.",
+    "de": "Unterstreiche das Wort."
+  },
+
+  {
+    "en": "Write your name.",
+    "de": "Schreibe deinen Namen."
+  },
+
+  {
+    "en": "Draw a house.",
+    "de": "Zeichne ein Haus."
+  },
+
+  {
+    "en": "Colour the ball.",
+    "de": "Male den Ball aus."
+  },
+
+  {
+    "en": "Mark the word.",
+    "de": "Markiere das Wort."
+  },
+
+  {
+    "en": "Number the pictures.",
+    "de": "Nummeriere die Bilder."
+  },
+
+  {
+    "en": "Cut out the picture.",
+    "de": "Schneide das Bild aus."
+  },
+
+  {
+    "en": "Stick the picture.",
+    "de": "Klebe das Bild auf."
+  },
+
+  {
+    "en": "Copy the word.",
+    "de": "Schreibe das Wort ab."
+  },
+
+  {
+    "en": "Read the text.",
+    "de": "Lies den Text."
+  },
+
+  {
+    "en": "Listen to me.",
+    "de": "Hör mir zu."
+  },
+
+  {
+    "en": "Check your answer.",
+    "de": "Überprüfe deine Antwort."
+  },
+
+  {
+    "en": "Cross out the word.",
+    "de": "Streiche das Wort durch."
+  }
+
 ];
 
 
 let currentMode = "word";
+
 let currentWordIndex = 0;
+
 let currentLineIndex = 0;
 
 
+/*
+ * Übersetzungsrichtung bestimmen
+ */
+
 function getDirection() {
+
   return document.querySelector(
     'input[name="direction"]:checked'
   ).value;
+
 }
 
+
+/*
+ * Zwischen Wörter und Sätze umschalten
+ */
 
 function changeMode() {
-  currentMode = document.getElementById("modeSelect").value;
+
+  const button =
+    document.getElementById("modeToggle");
+
+
+  if (currentMode === "word") {
+
+    currentMode = "line";
+
+    button.innerText =
+      "Einfache Sätze";
+
+    button.classList.remove(
+      "word-mode"
+    );
+
+    button.classList.add(
+      "line-mode"
+    );
+
+  } else {
+
+    currentMode = "word";
+
+    button.innerText =
+      "Einzelne Wörter";
+
+    button.classList.remove(
+      "line-mode"
+    );
+
+    button.classList.add(
+      "word-mode"
+    );
+
+  }
+
+
   resetUI();
+
 }
 
+
+/*
+ * Anzeige zurücksetzen
+ */
 
 function resetUI() {
 
-  document.getElementById("feedbackArea").innerText = "";
+  document.getElementById(
+    "feedbackArea"
+  ).innerText = "";
+
 
   if (currentMode === "word") {
 
     currentWordIndex = 0;
 
-    const word = array1[currentWordIndex];
+    const word =
+      array1[currentWordIndex];
 
-    document.getElementById("songText").innerText =
+    document.getElementById(
+      "songText"
+    ).innerText =
+
       getDirection() === "en-de"
         ? word.en
         : word.de;
@@ -216,106 +399,178 @@ function resetUI() {
 
     currentLineIndex = 0;
 
-    const line = array2[currentLineIndex];
+    const line =
+      array2[currentLineIndex];
 
-    document.getElementById("songText").innerText =
+    document.getElementById(
+      "songText"
+    ).innerText =
+
       getDirection() === "en-de"
         ? line.en
         : line.de;
+
   }
+
 }
 
+
+/*
+ * Nächstes Wort / nächster Satz
+ */
 
 function nextWord() {
 
   if (currentMode === "word") {
 
     currentWordIndex =
-      (currentWordIndex + 1) % array1.length;
+      (currentWordIndex + 1)
+      % array1.length;
 
-    const word = array1[currentWordIndex];
+    const word =
+      array1[currentWordIndex];
 
-    document.getElementById("songText").innerText =
+    document.getElementById(
+      "songText"
+    ).innerText =
+
       getDirection() === "en-de"
         ? word.en
         : word.de;
 
+
   } else {
 
     currentLineIndex =
-      (currentLineIndex + 1) % array2.length;
+      (currentLineIndex + 1)
+      % array2.length;
 
-    const line = array2[currentLineIndex];
+    const line =
+      array2[currentLineIndex];
 
-    document.getElementById("songText").innerText =
+    document.getElementById(
+      "songText"
+    ).innerText =
+
       getDirection() === "en-de"
         ? line.en
         : line.de;
+
   }
 
-  document.getElementById("feedbackArea").innerText = "";
+
+  document.getElementById(
+    "feedbackArea"
+  ).innerText = "";
+
 }
 
+
+/*
+ * Vorheriges Wort / vorheriger Satz
+ */
 
 function prevWord() {
 
   if (currentMode === "word") {
 
     currentWordIndex =
-      (currentWordIndex - 1 + array1.length)
+      (
+        currentWordIndex
+        - 1
+        + array1.length
+      )
       % array1.length;
 
-    const word = array1[currentWordIndex];
+    const word =
+      array1[currentWordIndex];
 
-    document.getElementById("songText").innerText =
+    document.getElementById(
+      "songText"
+    ).innerText =
+
       getDirection() === "en-de"
         ? word.en
         : word.de;
 
+
   } else {
 
     currentLineIndex =
-      (currentLineIndex - 1 + array2.length)
+      (
+        currentLineIndex
+        - 1
+        + array2.length
+      )
       % array2.length;
 
-    const line = array2[currentLineIndex];
+    const line =
+      array2[currentLineIndex];
 
-    document.getElementById("songText").innerText =
+    document.getElementById(
+      "songText"
+    ).innerText =
+
       getDirection() === "en-de"
         ? line.en
         : line.de;
+
   }
 
-  document.getElementById("feedbackArea").innerText = "";
+
+  document.getElementById(
+    "feedbackArea"
+  ).innerText = "";
+
 }
 
 
+/*
+ * Übersetzung anzeigen
+ */
+
 function checkTranslation() {
 
-  const direction = getDirection();
+  const direction =
+    getDirection();
+
 
   if (currentMode === "word") {
 
-    const word = array1[currentWordIndex];
+    const word =
+      array1[currentWordIndex];
 
-    document.getElementById("feedbackArea").innerText =
+    document.getElementById(
+      "feedbackArea"
+    ).innerText =
+
       direction === "en-de"
         ? word.de
         : word.en;
 
+
   } else {
 
-    const line = array2[currentLineIndex];
+    const line =
+      array2[currentLineIndex];
 
-    document.getElementById("feedbackArea").innerText =
+    document.getElementById(
+      "feedbackArea"
+    ).innerText =
+
       direction === "en-de"
         ? line.de
         : line.en;
+
   }
+
 }
 
 
-// Initialisieren
+/*
+ * Initialisieren
+ */
+
 resetUI();
 
 </script>
