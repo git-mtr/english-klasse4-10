@@ -76,28 +76,26 @@
       font-size: 1.1em;
     }
 
-    /* Toggle-Button für Wörter / Sätze */
+    .all-options {
+      display: none;
+      margin-top: 1em;
+      font-size: 1.1em;
+    }
 
-    .mode-toggle {
-      min-width: 190px;
+    .all-options label {
+      margin: 0 1em;
+    }
+
+    .topic-select {
+      min-width: 230px;
       padding: 0.7em 1.2em;
+      font-family: Verdana, sans-serif;
       font-size: 1em;
       color: #222;
+      background-color: #ffd54f;
       border: none;
       border-radius: 10px;
       cursor: pointer;
-    }
-
-    /* Wörter = Gelb */
-
-    .mode-toggle.word-mode {
-      background-color: #ffd54f;
-    }
-
-    /* Sätze = Orange */
-
-    .mode-toggle.line-mode {
-      background-color: #ff9800;
     }
   </style>
 </head>
@@ -108,7 +106,7 @@
 
     <h1>Englisch lernen</h1>
 
-    <div class="radio-group">
+    <div class="radio-group" id="directionGroup">
 
       <label>
         <input
@@ -136,13 +134,44 @@
 
     <div class="radio-group">
 
-      <button
-        id="modeToggle"
-        class="mode-toggle word-mode"
-        onclick="changeMode()"
+      <select
+        id="topicSelect"
+        class="topic-select"
+        onchange="changeTopic()"
       >
-        Einzelne Wörter
-      </button>
+        <option value="all">All</option>
+        <option value="begruessung">Begrüßung</option>
+        <option value="alter">Alter</option>
+        <option value="nahrung">Nahrung</option>
+        <option value="bewegung">Bewegung</option>
+        <option value="zahlen">Zahlen</option>
+        <option value="praepositionen">Präpositionen</option>
+        <option value="gegenstaende">Gegenstände</option>
+        <option value="koerper">Körper</option>
+        <option value="stadt">Stadt</option>
+        <option value="farben">Farben</option>
+        <option value="natur">Natur</option>
+        <option value="schule">Schule</option>
+        <option value="wochentage">Wochentage</option>
+        <option value="monate">Monate</option>
+        <option value="jahreszeiten">Jahreszeiten</option>
+        <option value="wetter">Wetter</option>
+        <option value="allgemein">Allgemein</option>
+        <option value="adjektive">Adjektive</option>
+        <option value="tiere">Tiere</option>
+      </select>
+
+      <div id="allOptions" class="all-options">
+        <label>
+          <input type="checkbox" id="randomEnglish" checked onchange="resetAllRandom()">
+          🇬🇧 Englisch
+        </label>
+
+        <label>
+          <input type="checkbox" id="randomGerman" checked onchange="resetAllRandom()">
+          🇩🇪 Deutsch
+        </label>
+      </div>
 
     </div>
 
@@ -191,121 +220,550 @@
 
 <script>
 
-const array1 = [
+/*
+ * 1. Begrüßung
+ */
 
-  { "en": "match",     "de": "verbinden" },
-  { "en": "circle",    "de": "einkreisen" },
-  { "en": "tick",      "de": "ankreuzen" },
-  { "en": "underline", "de": "unterstreichen" },
+const begruessung = [
 
-  { "en": "write",     "de": "schreiben" },
-  { "en": "draw",      "de": "maalen" },
-  { "en": "colour",    "de": "ausmalen" },
-  { "en": "mark",      "de": "markieren" },
+  { en: "Hello!", de: "Hallo!" },
+  { en: "Hi!", de: "Hi!" },
+  { en: "How are you?", de: "Wie geht’s dir?" },
+  { en: "I am good!", de: "Mir geht’s gut!" },
+  { en: "I am fine!", de: "Mir geht’s gut!" },
+  { en: "And you?", de: "Und dir?" },
+  { en: "I am fine, too.", de: "Mir geht’s auch gut." },
 
-  { "en": "number",    "de": "nummerieren" },
-  { "en": "cut out",   "de": "ausschneiden" },
-  { "en": "stick",     "de": "kleben" },
-  { "en": "copy",      "de": "abschreiben" },
+  { en: "What’s your name?", de: "Wie heißt du?" },
+  { en: "My name is Hannah.", de: "Mein Name ist Hannah." },
 
-  { "en": "read",      "de": "lesen" },
-  { "en": "listen",    "de": "zuhören" },
-  { "en": "check",     "de": "kontrolieren" },
-  { "en": "cross out", "de": "durchstreichen" }
+  { en: "What’s your mother’s name?", de: "Wie heißt deine Mutter?" },
+  { en: "What’s your father’s name?", de: "Wie heißt dein Vater?" },
 
-];
-
-
-const array2 = [
-
-  {
-    "en": "Match the words.",
-    "de": "Ordne die Wörter zu."
-  },
-
-  {
-    "en": "Circle the word.",
-    "de": "Kreise das Wort ein."
-  },
-
-  {
-    "en": "Tick the box.",
-    "de": "Hake das Kästchen ab."
-  },
-
-  {
-    "en": "Underline the word.",
-    "de": "Unterstreiche das Wort."
-  },
-
-  {
-    "en": "Write your name.",
-    "de": "Schreibe deinen Namen."
-  },
-
-  {
-    "en": "Draw a house.",
-    "de": "Zeichne ein Haus."
-  },
-
-  {
-    "en": "Colour the ball.",
-    "de": "Male den Ball aus."
-  },
-
-  {
-    "en": "Mark the word.",
-    "de": "Markiere das Wort."
-  },
-
-  {
-    "en": "Number the pictures.",
-    "de": "Nummeriere die Bilder."
-  },
-
-  {
-    "en": "Cut out the picture.",
-    "de": "Schneide das Bild aus."
-  },
-
-  {
-    "en": "Stick the picture.",
-    "de": "Klebe das Bild auf."
-  },
-
-  {
-    "en": "Copy the word.",
-    "de": "Schreibe das Wort ab."
-  },
-
-  {
-    "en": "Read the text.",
-    "de": "Lies den Text."
-  },
-
-  {
-    "en": "Listen to me.",
-    "de": "Hör mir zu."
-  },
-
-  {
-    "en": "Check your answer.",
-    "de": "Überprüfe deine Antwort."
-  },
-
-  {
-    "en": "Cross out the word.",
-    "de": "Streiche das Wort durch."
-  }
+  { en: "I am fine. And you?", de: "Mir geht’s gut. Und dir?" },
+  { en: "Nice to meet you!", de: "Schön, dich zu sehen." },
+  { en: "Good bye!", de: "Tschüss!" },
+  { en: "Bye bye!", de: "Bis dann!" },
+  { en: "See you!", de: "Wir sehen uns!" }
 
 ];
 
 
-let currentMode = "word";
+/*
+ * 2. Alter
+ */
+
+const alter = [
+
+  { en: "How old are you?", de: "Wie alt bist du?" },
+  { en: "I am 9 years old.", de: "Ich bin 9 Jahre alt." },
+  { en: "I am 8 (eight) years old.", de: "Ich bin 8 Jahre alt." },
+  { en: "I am 40 years old.", de: "Ich bin 40 Jahre alt." },
+  { en: "I am 10 (ten) years old.", de: "Ich bin 10 Jahre alt." },
+
+  { en: "My family is big | small.", de: "Meine Familie ist groß | klein." },
+  { en: "Have you got a brother?", de: "Hast du einen Bruder?" },
+  { en: "Have you got a brother or a sister?", de: "Hast du einen Bruder oder eine Schwester?" }
+
+];
+
+
+/*
+ * 3. Nahrung
+ */
+
+const nahrung = [
+
+  { en: "honey", de: "Honig" },
+  { en: "lemon", de: "Zitrone" },
+  { en: "lettuce", de: "Salat" },
+  { en: "mushroom", de: "Pilze" },
+  { en: "sandwich", de: "Sandwich" },
+  { en: "strawberry", de: "Erdbeere" },
+  { en: "tomato", de: "Tomate" },
+  { en: "tuna", de: "Thunfisch" },
+  { en: "ham", de: "Schinken" },
+  { en: "egg", de: "Ei" },
+  { en: "milk", de: "Milch" },
+  { en: "cornflakes", de: "Cornflakes" },
+  { en: "jam", de: "Marmelade" },
+  { en: "bread", de: "Brot" },
+  { en: "orange", de: "Orange" },
+  { en: "apple", de: "Apfel" },
+  { en: "banana", de: "Banane" },
+  { en: "cheese", de: "Käse" },
+  { en: "cucumber", de: "Gurke" },
+  { en: "grapefruit", de: "Grapefruit" },
+
+  { en: "I like …", de: "Ich mag …" },
+  { en: "I don't like …", de: "Ich mag nicht …" },
+  { en: "I don't like bananas.", de: "Ich mag keine Bananen." },
+  { en: "I like jam.", de: "Ich mag Marmelade." },
+  { en: "I don't like ham.", de: "Ich mag keinen Schinken." },
+  { en: "I like oranges.", de: "Ich mag Orangen." },
+  { en: "I don't like kiwis.", de: "Ich mag keine Kiwis." },
+  { en: "I like honey.", de: "Ich mag Honig." },
+
+  { en: "I don't like tuna.", de: "Ich mag keinen Thunfisch." },
+  { en: "I like mushrooms.", de: "Ich mag Pilze." },
+  { en: "I don't like meat.", de: "Ich mag kein Fleisch." },
+  { en: "I like tomatoes.", de: "Ich mag Tomaten." },
+  { en: "I don't like onions.", de: "Ich mag keine Zwiebeln." },
+
+  { en: "What do you like on your sandwich?", de: "Was magst du auf deinem Sandwich?" },
+  { en: "I like on my sandwich", de: "Auf meinem Sandwich mag ich" },
+  { en: "cucumber and lettuce.", de: "Gurke und Salat." },
+
+  { en: "English breakfast", de: "Englisches Frühstück" },
+  { en: "mushrooms", de: "Pilze" },
+  { en: "toast", de: "Toast" },
+  { en: "fried eggs", de: "Spiegeleier" },
+  { en: "tea", de: "Tee" },
+  { en: "fried bacon", de: "gebratener Speck" },
+  { en: "baked beans", de: "Bohnen in Tomatensoße" },
+  { en: "sausages", de: "Würstchen" },
+  { en: "orange juice", de: "Orangensaft" },
+
+  { en: "For breakfast I eat …", de: "Zum Frühstück esse ich …" },
+  { en: "with", de: "mit" },
+  { en: "For breakfast I drink …", de: "Zum Frühstück trinke ich …" },
+  { en: "without", de: "ohne" }
+
+];
+
+
+/*
+ * 4. Bewegung
+ */
+
+const bewegung = [
+
+  { en: "Clap your hands.", de: "Klatsche deine Hände." },
+  { en: "Close your eyes.", de: "Schließe deine Augen." },
+  { en: "Flap your arms.", de: "Flatter mit deinen Armen." },
+  { en: "Jump up high.", de: "Spring hoch." },
+  { en: "Sing a song.", de: "Singe ein Lied." },
+  { en: "Reach for the sky.", de: "Streck dich zum Himmel." },
+  { en: "Sit down.", de: "Setz dich hin." },
+  { en: "Stamp your feet.", de: "Stampfe mit deinen Füßen." },
+  { en: "Stand up.", de: "Steh auf." },
+  { en: "Touch your nose.", de: "Fass deine Nase an." },
+  { en: "Turn around.", de: "Dreh dich um." },
+  { en: "Wiggle your fingers.", de: "Wackel mit deinen Fingern." }
+
+];
+
+
+/*
+ * 5. Zahlen
+ */
+
+const zahlen = [
+
+  { en: "numbers", de: "Zahlen" },
+
+  { en: "1 – one", de: "eins" },
+  { en: "2 – two", de: "zwei" },
+  { en: "3 – three", de: "drei" },
+  { en: "4 – four", de: "vier" },
+  { en: "5 – five", de: "fünf" },
+  { en: "6 – six", de: "sechs" },
+  { en: "7 – seven", de: "sieben" },
+  { en: "8 – eight", de: "acht" },
+  { en: "9 – nine", de: "neun" },
+  { en: "10 – ten", de: "zehn" },
+  { en: "11 – eleven", de: "elf" },
+  { en: "12 – twelve", de: "zwölf" },
+  { en: "13 – thirteen", de: "dreizehn" },
+  { en: "14 – fourteen", de: "vierzehn" },
+  { en: "15 – fifteen", de: "fünfzehn" },
+  { en: "16 – sixteen", de: "sechzehn" },
+  { en: "17 – seventeen", de: "siebzehn" },
+  { en: "18 – eighteen", de: "achtzehn" },
+  { en: "19 – nineteen", de: "neunzehn" },
+  { en: "20 – twenty", de: "zwanzig" },
+  { en: "21 – twenty-one", de: "einundzwanzig" },
+  { en: "22 – twenty-two", de: "zweiundzwanzig" },
+  { en: "23 – twenty-three", de: "dreiundzwanzig" },
+  { en: "24 – twenty-four", de: "vierundzwanzig" },
+  { en: "25 – twenty-five", de: "fünfundzwanzig" },
+  { en: "26 – twenty-six", de: "sechsundzwanzig" },
+  { en: "27 – twenty-seven", de: "siebenundzwanzig" },
+  { en: "28 – twenty-eight", de: "achtundzwanzig" },
+  { en: "29 – twenty-nine", de: "neunundzwanzig" },
+  { en: "30 – thirty", de: "dreißig" },
+  { en: "31 – thirty-one", de: "einunddreißig" },
+
+  { en: "When is your birthday?", de: "Wann ist dein Geburtstag?" },
+  { en: "My birthday is in …", de: "Mein Geburtstag ist im …" }
+
+];
+
+
+/*
+ * 6. Präpositionen
+ */
+
+const praepositionen = [
+
+  { en: "in", de: "in" },
+  { en: "on", de: "auf, an" },
+  { en: "at", de: "an, bei, um" },
+  { en: "under", de: "unter" },
+  { en: "over", de: "über" },
+  { en: "above", de: "oberhalb, über" },
+  { en: "below", de: "unterhalb" },
+  { en: "behind", de: "hinter" },
+  { en: "in front of", de: "vor" },
+  { en: "between", de: "zwischen" },
+  { en: "among", de: "unter, zwischen" },
+  { en: "next to", de: "neben" },
+  { en: "beside", de: "neben" },
+  { en: "near", de: "nahe, bei" },
+  { en: "by", de: "bei, neben, von" },
+  { en: "with", de: "mit" },
+  { en: "without", de: "ohne" },
+  { en: "for", de: "für" },
+  { en: "from", de: "von, aus" },
+  { en: "to", de: "zu, nach" },
+  { en: "into", de: "in … hinein" },
+  { en: "onto", de: "auf … hinauf" },
+  { en: "out of", de: "aus … heraus" },
+  { en: "through", de: "durch" },
+  { en: "across", de: "über, quer durch" },
+  { en: "along", de: "entlang" },
+  { en: "around", de: "um, herum" },
+  { en: "against", de: "gegen" },
+  { en: "towards", de: "in Richtung" },
+  { en: "before", de: "vor" },
+  { en: "after", de: "nach" },
+  { en: "during", de: "während" },
+  { en: "since", de: "seit" },
+  { en: "until / till", de: "bis" },
+  { en: "about", de: "über, ungefähr" },
+  { en: "of", de: "von" },
+  { en: "because of", de: "wegen" },
+  { en: "despite", de: "trotz" },
+  { en: "except", de: "außer" }
+
+];
+
+
+/*
+ * 7. Gegenstände
+ */
+
+const gegenstaende = [
+
+  { en: "camera", de: "Fotokamera" },
+  { en: "the table", de: "der Tisch" },
+  { en: "the chair", de: "der Stuhl" },
+  { en: "the couch", de: "das Sofa" }
+
+];
+
+
+/*
+ * 8. Körper
+ */
+
+const koerper = [
+
+  { en: "legs", de: "Beine" },
+  { en: "head", de: "Kopf" }
+
+];
+
+
+/*
+ * 9. Stadt
+ */
+
+const stadt = [
+
+  { en: "traffic lights", de: "Ampel" },
+  { en: "buildings", de: "Gebäude" },
+  { en: "bus stop", de: "Bushaltestelle" }
+
+];
+
+
+/*
+ * 10. Farben
+ */
+
+const farben = [
+
+  { en: "red", de: "rot" },
+  { en: "orange", de: "orange" },
+  { en: "yellow", de: "gelb" },
+  { en: "blue", de: "blau" },
+  { en: "green", de: "grün" },
+  { en: "brown", de: "braun" },
+  { en: "black", de: "schwarz" },
+  { en: "white", de: "weiß" },
+  { en: "pink", de: "rosa" },
+  { en: "purple", de: "lila" },
+  { en: "grey", de: "grau" }
+
+];
+
+
+/*
+ * 11. Natur
+ */
+
+const natur = [
+
+  { en: "rainbow", de: "Regenbogen" },
+  { en: "tree", de: "Baum" },
+  { en: "sun", de: "Sonne" },
+  { en: "flower", de: "Blume" },
+  { en: "flowers", de: "Blumen" },
+  { en: "bird", de: "Vogel" },
+  { en: "cloud", de: "Wolke" },
+  { en: "butterfly", de: "Schmetterling" },
+  { en: "forest", de: "Wald" },
+  { en: "mountain", de: "Berg" },
+  { en: "mountains", de: "Berge" },
+  { en: "river", de: "Fluss" },
+  { en: "lake", de: "See" },
+  { en: "sea", de: "Meer" },
+  { en: "stone", de: "Stein" },
+  { en: "mud", de: "Matsch" },
+  { en: "grass", de: "Gras" },
+  { en: "There is …", de: "Dort ist …" },
+  { en: "There are …", de: "Dort sind …" }
+
+];
+
+
+/*
+ * 12. Schule
+ */
+
+const schule = [
+
+  { en: "ruler", de: "Lineal" },
+  { en: "rubber / eraser", de: "Radiergummi" },
+  { en: "school bag", de: "Schulranzen" },
+  { en: "pencil sharpener", de: "Anspitzer" },
+  { en: "felt tip", de: "Filzstift" },
+  { en: "coloured pencil", de: "Buntstift" },
+  { en: "glue", de: "Klebe" },
+  { en: "scissors", de: "Schere" },
+  { en: "pen", de: "Füller" },
+  { en: "pencil", de: "Bleistift" },
+  { en: "pencil case", de: "Federtasche" },
+  { en: "folder", de: "Hefter" },
+  { en: "chalk", de: "Kreide" },
+  { en: "blackboard", de: "Tafel" },
+  { en: "teacher", de: "Lehrer" },
+  { en: "book", de: "Buch" },
+  { en: "pupil", de: "Schüler" },
+  { en: "desk", de: "Schreibtisch" },
+  { en: "chair", de: "Stuhl" }
+
+];
+
+
+/*
+ * 13. Wochentage
+ */
+
+const wochentage = [
+
+  { en: "Monday", de: "Montag" },
+  { en: "Tuesday", de: "Dienstag" },
+  { en: "Wednesday", de: "Mittwoch" },
+  { en: "Thursday", de: "Donnerstag" },
+  { en: "Friday", de: "Freitag" },
+  { en: "Saturday", de: "Samstag" },
+  { en: "Sunday", de: "Sonntag" },
+
+  { en: "week", de: "Woche" },
+  { en: "weekend", de: "Wochenende" },
+  { en: "yesterday", de: "gestern" },
+  { en: "today", de: "heute" },
+  { en: "tomorrow", de: "morgen" },
+  { en: "the days of the week", de: "die Wochentage" }
+
+];
+
+
+/*
+ * 14. Monate
+ */
+
+const monate = [
+
+  { en: "month", de: "Monat" },
+  { en: "January", de: "Januar" },
+  { en: "February", de: "Februar" },
+  { en: "March", de: "März" },
+  { en: "April", de: "April" },
+  { en: "May", de: "Mai" },
+  { en: "June", de: "Juni" },
+  { en: "July", de: "Juli" },
+  { en: "August", de: "August" },
+  { en: "September", de: "September" },
+  { en: "October", de: "Oktober" },
+  { en: "November", de: "November" },
+  { en: "December", de: "Dezember" }
+
+];
+
+
+/*
+ * 15. Jahreszeiten
+ */
+
+const jahreszeiten = [
+
+  { en: "spring", de: "Frühling" },
+  { en: "summer", de: "Sommer" },
+  { en: "autumn / fall", de: "Herbst" },
+  { en: "winter", de: "Winter" }
+
+];
+
+
+/*
+ * 16. Wetter
+ */
+
+const wetter = [
+
+  { en: "Weather", de: "Wetter" },
+  { en: "sunny", de: "sonnig" },
+  { en: "cloudy", de: "wolkig" },
+  { en: "rainy", de: "regnerisch" },
+  { en: "snowy", de: "verschneit" },
+  { en: "windy", de: "windig" },
+  { en: "stormy", de: "stürmisch" },
+  { en: "foggy", de: "neblig" },
+  { en: "cold", de: "kalt" },
+  { en: "warm", de: "warm" },
+  { en: "hot", de: "heiß" },
+  { en: "thundery", de: "Gewitter" },
+  { en: "changeable", de: "wechselhaft" },
+  { en: "rainbow", de: "Regenbogen" },
+
+  { en: "thundery", de: "gewittrig" },
+  { en: "cool", de: "kühl" },
+  { en: "freezing", de: "eiskalt" },
+  { en: "It's hailing.", de: "Es hagelt." },
+  { en: "What's the weather like today?", de: "Wie ist das Wetter heute?" }
+
+];
+
+
+/*
+ * 17. Allgemein
+ */
+
+const allgemein = [
+
+  { en: "Where are you from?", de: "Woher kommst du?" },
+  { en: "I am from Germany.", de: "Ich komme aus Deutschland." },
+  { en: "the bed", de: "das Bett" },
+  { en: "How many … are there?", de: "Wie viele … sind da?" },
+  { en: "Where is the mouse?", de: "Wo ist die Maus?" },
+  { en: "You can see …", de: "Du kannst sehen …" }
+
+];
+
+
+/*
+ * 18. Adjektive
+ */
+
+const adjektive = [
+
+  { en: "happy", de: "glücklich" },
+  { en: "big", de: "groß" },
+  { en: "small", de: "klein" }
+
+];
+
+
+/*
+ * 19. Tiere
+ */
+
+const tiere = [
+
+  { en: "animals", de: "Tiere" },
+  { en: "horse", de: "Pferd" },
+  { en: "dog", de: "Hund" },
+  { en: "cat", de: "Katze" },
+  { en: "crocodile", de: "Krokodil" },
+  { en: "chicken", de: "Huhn" },
+  { en: "pig", de: "Schwein" },
+  { en: "donkey", de: "Esel" },
+  { en: "elephant", de: "Elefant" },
+  { en: "bird", de: "Vogel" },
+  { en: "raven", de: "Rabe" }
+
+];
+
+
+/*
+ * Zuordnung Pulldown -> Array
+ */
+
+const topics = {
+
+  begruessung: begruessung,
+  alter: alter,
+  nahrung: nahrung,
+  bewegung: bewegung,
+  zahlen: zahlen,
+  praepositionen: praepositionen,
+  gegenstaende: gegenstaende,
+  koerper: koerper,
+  stadt: stadt,
+  farben: farben,
+  natur: natur,
+  schule: schule,
+  wochentage: wochentage,
+  monate: monate,
+  jahreszeiten: jahreszeiten,
+  wetter: wetter,
+  allgemein: allgemein,
+  adjektive: adjektive,
+  tiere: tiere
+
+};
+
+
+/*
+ * Aktueller Index / All-Modus
+ */
 
 let currentWordIndex = 0;
+let allHistory = [];
+let allHistoryIndex = -1;
 
-let currentLineIndex = 0;
+
+/*
+ * Aktuelles Array bestimmen
+ */
+
+function getCurrentArray() {
+
+  const topic =
+    document.getElementById(
+      "topicSelect"
+    ).value;
+
+  if (topic === "all") {
+    return Object.values(topics).flat();
+  }
+
+  return topics[topic];
+
+}
 
 
 /*
@@ -322,49 +780,162 @@ function getDirection() {
 
 
 /*
- * Zwischen Wörter und Sätze umschalten
+ * Zufälligen Eintrag für All erzeugen
  */
 
-function changeMode() {
+function createRandomAllEntry() {
 
-  const button =
-    document.getElementById("modeToggle");
+  const allWords = Object.values(topics).flat();
 
+  const englishChecked =
+    document.getElementById("randomEnglish").checked;
 
-  if (currentMode === "word") {
+  const germanChecked =
+    document.getElementById("randomGerman").checked;
 
-    currentMode = "line";
-
-    button.innerText =
-      "Einfache Sätze";
-
-    button.classList.remove(
-      "word-mode"
-    );
-
-    button.classList.add(
-      "line-mode"
-    );
-
-  } else {
-
-    currentMode = "word";
-
-    button.innerText =
-      "Einzelne Wörter";
-
-    button.classList.remove(
-      "line-mode"
-    );
-
-    button.classList.add(
-      "word-mode"
-    );
-
+  if (!englishChecked && !germanChecked) {
+    return null;
   }
 
+  const word =
+    allWords[Math.floor(Math.random() * allWords.length)];
 
-  resetUI();
+  let language;
+
+  if (englishChecked && germanChecked) {
+    language = Math.random() < 0.5 ? "en" : "de";
+  } else if (englishChecked) {
+    language = "en";
+  } else {
+    language = "de";
+  }
+
+  return {
+    word: word,
+    language: language
+  };
+
+}
+
+
+/*
+ * Zufälligen All-Eintrag zur Historie hinzufügen
+ */
+
+function addRandomAllEntry() {
+
+  const entry = createRandomAllEntry();
+
+  if (!entry) {
+    document.getElementById(
+      "songText"
+    ).innerText = "Bitte Englisch und/oder Deutsch auswählen.";
+
+    document.getElementById(
+      "feedbackArea"
+    ).innerText = "";
+
+    return false;
+  }
+
+  if (allHistoryIndex < allHistory.length - 1) {
+    allHistory = allHistory.slice(0, allHistoryIndex + 1);
+  }
+
+  allHistory.push(entry);
+  allHistoryIndex = allHistory.length - 1;
+
+  return true;
+
+}
+
+
+/*
+ * Aktuellen Eintrag anzeigen
+ */
+
+function showCurrentWord() {
+
+  const topic =
+    document.getElementById("topicSelect").value;
+
+  if (topic === "all") {
+
+    if (allHistoryIndex < 0) {
+      if (!addRandomAllEntry()) {
+        return;
+      }
+    }
+
+    const entry = allHistory[allHistoryIndex];
+
+    document.getElementById(
+      "songText"
+    ).innerText =
+      entry.language === "en"
+        ? entry.word.en
+        : entry.word.de;
+
+    return;
+  }
+
+  const currentArray = getCurrentArray();
+  const word = currentArray[currentWordIndex];
+
+  document.getElementById(
+    "songText"
+  ).innerText =
+    getDirection() === "en-de"
+      ? word.en
+      : word.de;
+
+}
+
+
+/*
+ * Thema wechseln
+ */
+
+function changeTopic() {
+
+  currentWordIndex = 0;
+  allHistory = [];
+  allHistoryIndex = -1;
+
+  const isAll =
+    document.getElementById("topicSelect").value === "all";
+
+  document.getElementById(
+    "allOptions"
+  ).style.display = isAll ? "block" : "none";
+
+  document.getElementById(
+    "directionGroup"
+  ).style.display = isAll ? "none" : "block";
+
+  document.getElementById(
+    "feedbackArea"
+  ).innerText = "";
+
+  showCurrentWord();
+
+}
+
+
+/*
+ * All-Zufall nach Änderung einer Checkbox zurücksetzen
+ */
+
+function resetAllRandom() {
+
+  allHistory = [];
+  allHistoryIndex = -1;
+
+  document.getElementById(
+    "feedbackArea"
+  ).innerText = "";
+
+  showCurrentWord();
 
 }
 
@@ -375,89 +946,52 @@ function changeMode() {
 
 function resetUI() {
 
+  currentWordIndex = 0;
+
   document.getElementById(
     "feedbackArea"
   ).innerText = "";
 
-
-  if (currentMode === "word") {
-
-    currentWordIndex = 0;
-
-    const word =
-      array1[currentWordIndex];
-
-    document.getElementById(
-      "songText"
-    ).innerText =
-
-      getDirection() === "en-de"
-        ? word.en
-        : word.de;
-
-  } else {
-
-    currentLineIndex = 0;
-
-    const line =
-      array2[currentLineIndex];
-
-    document.getElementById(
-      "songText"
-    ).innerText =
-
-      getDirection() === "en-de"
-        ? line.en
-        : line.de;
-
-  }
+  showCurrentWord();
 
 }
 
 
 /*
- * Nächstes Wort / nächster Satz
+ * Nächster Eintrag
  */
 
 function nextWord() {
 
-  if (currentMode === "word") {
+  const topic =
+    document.getElementById("topicSelect").value;
 
-    currentWordIndex =
-      (currentWordIndex + 1)
-      % array1.length;
+  if (topic === "all") {
 
-    const word =
-      array1[currentWordIndex];
+    if (allHistoryIndex < allHistory.length - 1) {
+      allHistoryIndex++;
+    } else {
+      if (!addRandomAllEntry()) {
+        return;
+      }
+    }
 
-    document.getElementById(
-      "songText"
-    ).innerText =
-
-      getDirection() === "en-de"
-        ? word.en
-        : word.de;
-
-
-  } else {
-
-    currentLineIndex =
-      (currentLineIndex + 1)
-      % array2.length;
-
-    const line =
-      array2[currentLineIndex];
+    showCurrentWord();
 
     document.getElementById(
-      "songText"
-    ).innerText =
+      "feedbackArea"
+    ).innerText = "";
 
-      getDirection() === "en-de"
-        ? line.en
-        : line.de;
-
+    return;
   }
 
+  const currentArray = getCurrentArray();
+
+  currentWordIndex =
+    (currentWordIndex + 1)
+    % currentArray.length;
+
+  showCurrentWord();
 
   document.getElementById(
     "feedbackArea"
@@ -467,56 +1001,39 @@ function nextWord() {
 
 
 /*
- * Vorheriges Wort / vorheriger Satz
+ * Vorheriger Eintrag
  */
 
 function prevWord() {
 
-  if (currentMode === "word") {
+  const topic =
+    document.getElementById("topicSelect").value;
 
-    currentWordIndex =
-      (
-        currentWordIndex
-        - 1
-        + array1.length
-      )
-      % array1.length;
+  if (topic === "all") {
 
-    const word =
-      array1[currentWordIndex];
+    if (allHistoryIndex > 0) {
+      allHistoryIndex--;
+      showCurrentWord();
+    }
 
     document.getElementById(
-      "songText"
-    ).innerText =
+      "feedbackArea"
+    ).innerText = "";
 
-      getDirection() === "en-de"
-        ? word.en
-        : word.de;
-
-
-  } else {
-
-    currentLineIndex =
-      (
-        currentLineIndex
-        - 1
-        + array2.length
-      )
-      % array2.length;
-
-    const line =
-      array2[currentLineIndex];
-
-    document.getElementById(
-      "songText"
-    ).innerText =
-
-      getDirection() === "en-de"
-        ? line.en
-        : line.de;
-
+    return;
   }
 
+  const currentArray = getCurrentArray();
+
+  currentWordIndex =
+    (
+      currentWordIndex
+      - 1
+      + currentArray.length
+    )
+    % currentArray.length;
+
+  showCurrentWord();
 
   document.getElementById(
     "feedbackArea"
@@ -531,38 +1048,37 @@ function prevWord() {
 
 function checkTranslation() {
 
-  const direction =
-    getDirection();
+  const topic =
+    document.getElementById("topicSelect").value;
 
+  if (topic === "all") {
 
-  if (currentMode === "word") {
+    if (allHistoryIndex < 0) {
+      return;
+    }
 
-    const word =
-      array1[currentWordIndex];
-
-    document.getElementById(
-      "feedbackArea"
-    ).innerText =
-
-      direction === "en-de"
-        ? word.de
-        : word.en;
-
-
-  } else {
-
-    const line =
-      array2[currentLineIndex];
+    const entry = allHistory[allHistoryIndex];
 
     document.getElementById(
       "feedbackArea"
     ).innerText =
+      entry.language === "en"
+        ? entry.word.de
+        : entry.word.en;
 
-      direction === "en-de"
-        ? line.de
-        : line.en;
-
+    return;
   }
+
+  const currentArray = getCurrentArray();
+  const word = currentArray[currentWordIndex];
+  const direction = getDirection();
+
+  document.getElementById(
+    "feedbackArea"
+  ).innerText =
+    direction === "en-de"
+      ? word.de
+      : word.en;
 
 }
 
@@ -571,7 +1087,7 @@ function checkTranslation() {
  * Initialisieren
  */
 
-resetUI();
+changeTopic();
 
 </script>
 
